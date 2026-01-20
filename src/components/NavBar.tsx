@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import useAuth from "@/hooks/use-auth";
 import logo from "/logo.png";
 
 function NavBar() {
@@ -9,6 +10,12 @@ function NavBar() {
 		{ to: "/adduser", label: "Add User" },
 		{ to: "/generate", label: "Generate" },
 	];
+
+	const { isAuthenticated } = useAuth();
+
+	if (!isAuthenticated) {
+		return null;
+	}
 	return (
 		<nav className="container bg-primary/90 mx-auto flex p-4 px-10 rounded-2xl mb-10">
 			<Link to="/">

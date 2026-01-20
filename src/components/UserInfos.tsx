@@ -22,6 +22,7 @@ function UserInfos() {
 				const response = await me();
 				setUser(response.data);
 			} catch (error) {
+				localStorage.removeItem("token");
 				navigate({ to: "/login" });
 			}
 		}
