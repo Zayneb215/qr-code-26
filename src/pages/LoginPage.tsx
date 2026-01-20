@@ -1,6 +1,6 @@
 import { Label } from "@radix-ui/react-label";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Background from "@/components/Background";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,9 +21,15 @@ function LoginPage() {
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState<string | null>(null);
 
-	const { login } = useAuth();
+	const { login, isAuthenticated } = useAuth();
 
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			navigate({ to: "/" });
+		}
+	}, [isAuthenticated, navigate]);
 
 	async function handleLogin() {
 		try {

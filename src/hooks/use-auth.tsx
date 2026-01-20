@@ -1,6 +1,16 @@
 import axios from "axios";
 import { API_BASE_URL } from "@/constants/api";
 
+export interface User {
+	id: string;
+	email: string;
+	is_active: boolean;
+	is_superuser: boolean;
+	is_verified: boolean;
+	name: string;
+	last_name: string;
+}
+
 interface LoginResponse {
 	access_token: string;
 }
@@ -42,5 +52,25 @@ export default function useAuth() {
 		return response;
 	}
 
-	return { login, register };
+	async function me() {
+		const token = localStorage.getItem("token");
+		if (!token) {
+			throw new Error("No token found");
+		}
+
+		const response = await axios.get<User>(`${API_BASE_URL}/users/me`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+
+		return response;
+	}
+	async function logout() {
+		localStorage.removeItem("token");
+	}
+
+	const isAuthenticated = !!localStorage.getItem("token");
+
+	return { login, register, me, logout, isAuthenticated };
 }

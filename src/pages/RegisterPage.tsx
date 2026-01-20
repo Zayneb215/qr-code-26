@@ -1,7 +1,7 @@
 import { Label } from "@radix-ui/react-label";
 import { Link, useNavigate } from "@tanstack/react-router";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Background from "@/components/Background";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,6 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { API_BASE_URL } from "@/constants/api";
 import useAuth, { type RegisterData } from "@/hooks/use-auth";
 
 function RegisterPage() {
@@ -26,8 +25,14 @@ function RegisterPage() {
 	const [successMessage, setSuccessMessage] = useState<string | null>(null);
 	const [errorMessage, setErrorMessage] = useState<string | null>();
 
-	const { register } = useAuth();
+	const { register, isAuthenticated } = useAuth();
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			navigate({ to: "/" });
+		}
+	}, [isAuthenticated, navigate]);
 
 	function clearAll() {
 		setName("");
