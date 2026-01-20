@@ -12,6 +12,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Link } from "@tanstack/react-router";
 
 function LoginPage() {
 	const [email, setEmail] = useState<string>("");
@@ -30,7 +31,9 @@ function LoginPage() {
 							Enter your email below to login to your account
 						</CardDescription>
 						<CardAction>
-							<Button variant="link">Sign Up</Button>
+							<Link to="/register">
+								<Button variant="link">Register</Button>
+							</Link>
 						</CardAction>
 					</CardHeader>
 					<CardContent>
