@@ -1,27 +1,60 @@
+import { Label } from "@radix-ui/react-label";
+import { Link } from "@tanstack/react-router";
+import axios from "axios";
+import { useState } from "react";
 import Background from "@/components/Background";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
-	CardHeader,
-	CardTitle,
-	CardDescription,
 	CardAction,
 	CardContent,
+	CardDescription,
 	CardFooter,
+	CardHeader,
+	CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@radix-ui/react-label";
-import { Link } from "@tanstack/react-router";
-import React, { useState } from "react";
+import { API_BASE_URL } from "@/constants/api";
 
 function RegisterPage() {
 	const [name, setName] = useState<string>("");
 	const [lastName, setLastName] = useState<string>("");
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
-	function register() {
-		console.log("Registering with", { name, lastName, email, password });
+	const [successMessage, setSuccessMessage] = useState<string | null>(null);
+	const [errorMessage, setErrorMessage] = useState<string | null>();
+
+	function clearAll() {
+		setName("");
+		setLastName("");
+		setEmail("");
+		setPassword("");
 	}
+
+	async function register() {
+		const data = {
+			email: email,
+			password: password,
+			name: name,
+			last_name: lastName,
+		};
+		try {
+			const resonse = await axios.post(`${API_BASE_URL}/auth/register`, data);
+			if (resonse.status === 201)
+				setSuccessMessage("User registered successfully");
+			setTimeout(() => {
+				setSuccessMessage(null);
+			}, 1000);
+			clearAll();
+		} catch (error: any) {
+			setErrorMessage(error.response.data.message || "Registration failed");
+			setTimeout(() => {
+				setErrorMessage(null);
+			}, 1000);
+		}
+	}
+
 	return (
 		<Background>
 			<div className="min-h-screen flex justify-center items-center">
@@ -47,6 +80,7 @@ function RegisterPage() {
 											type="text"
 											placeholder="John"
 											required
+											value={name}
 											onChange={(event) => setName(event.target.value)}
 										/>
 									</div>
@@ -56,6 +90,7 @@ function RegisterPage() {
 											type="text"
 											placeholder="Doe"
 											required
+											value={lastName}
 											onChange={(event) => setLastName(event.target.value)}
 										/>
 									</div>
@@ -66,6 +101,7 @@ function RegisterPage() {
 										type="email"
 										placeholder="m@example.com"
 										required
+										value={email}
 										onChange={(event) => setEmail(event.target.value)}
 									/>
 								</div>
@@ -74,6 +110,7 @@ function RegisterPage() {
 										<Label htmlFor="password">Password</Label>
 									</div>
 									<Input
+										value={password}
 										type="password"
 										required
 										onChange={(event) => setPassword(event.target.value)}
@@ -86,6 +123,12 @@ function RegisterPage() {
 						<Button type="submit" className="w-full" onClick={register}>
 							Register
 						</Button>
+						{successMessage && (
+							<Badge variant="secondary">successMessage</Badge>
+						)}
+						{errorMessage && (
+							<Badge variant="destructive">{errorMessage}</Badge>
+						)}
 					</CardFooter>
 				</Card>
 			</div>
