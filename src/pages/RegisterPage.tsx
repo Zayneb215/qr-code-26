@@ -120,7 +120,7 @@ function RegisterPage() {
 						</form>
 					</CardContent>
 					<CardFooter className="flex-col gap-2">
-						<Button type="submit" className="w-full" onClick={register}>
+						<Button type="button" className="w-full" onClick={register}>
 							Register
 						</Button>
 						{successMessage && (
