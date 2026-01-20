@@ -1,5 +1,5 @@
 import { Label } from "@radix-ui/react-label";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import axios from "axios";
 import { useState } from "react";
 import Background from "@/components/Background";
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { API_BASE_URL } from "@/constants/api";
+import useAuth, { type RegisterData } from "@/hooks/use-auth";
 
 function RegisterPage() {
 	const [name, setName] = useState<string>("");
@@ -25,6 +26,9 @@ function RegisterPage() {
 	const [successMessage, setSuccessMessage] = useState<string | null>(null);
 	const [errorMessage, setErrorMessage] = useState<string | null>();
 
+	const { register } = useAuth();
+	const navigate = useNavigate();
+
 	function clearAll() {
 		setName("");
 		setLastName("");
@@ -32,21 +36,23 @@ function RegisterPage() {
 		setPassword("");
 	}
 
-	async function register() {
-		const data = {
+	async function handleRegister() {
+		const data: RegisterData = {
 			email: email,
 			password: password,
 			name: name,
 			last_name: lastName,
 		};
 		try {
-			const resonse = await axios.post(`${API_BASE_URL}/auth/register`, data);
-			if (resonse.status === 201)
+			const response = await register(data);
+			if (response.status === 201)
 				setSuccessMessage("User registered successfully");
 			setTimeout(() => {
 				setSuccessMessage(null);
 			}, 1000);
 			clearAll();
+
+			navigate({ to: "/login" });
 		} catch (error: any) {
 			setErrorMessage(error.response.data.message || "Registration failed");
 			setTimeout(() => {
@@ -120,7 +126,7 @@ function RegisterPage() {
 						</form>
 					</CardContent>
 					<CardFooter className="flex-col gap-2">
-						<Button type="button" className="w-full" onClick={register}>
+						<Button type="button" className="w-full" onClick={handleRegister}>
 							Register
 						</Button>
 						{successMessage && (

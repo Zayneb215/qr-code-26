@@ -1,6 +1,5 @@
 import { Label } from "@radix-ui/react-label";
-import { Link } from "@tanstack/react-router";
-import axios from "axios";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import Background from "@/components/Background";
 import { Badge } from "@/components/ui/badge";
@@ -15,33 +14,25 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { API_BASE_URL } from "@/constants/api";
+import useAuth, { type LoginData } from "@/hooks/use-auth";
 
-interface LoginResponse {
-	access_token: string;
-}
 function LoginPage() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState<string | null>(null);
 
-	async function login() {
-		try {
-			const data = new URLSearchParams();
-			data.append("username", email);
-			data.append("password", password);
-			const response = await axios.post<LoginResponse>(
-				`${API_BASE_URL}/auth/jwt/login`,
-				data,
-				{
-					headers: {
-						"Content-Type": "application/x-www-form-urlencoded",
-					},
-				},
-			);
+	const { login } = useAuth();
 
-			localStorage.setItem("token", response.data.access_token);
-			console.log("LOGIN OK ✅", response.data);
+	const navigate = useNavigate();
+
+	async function handleLogin() {
+		try {
+			const loginData: LoginData = {
+				username: email,
+				password: password,
+			};
+			await login(loginData);
+			navigate({ to: "/" });
 		} catch (err: any) {
 			setError(err.response?.data?.message || "Login failed");
 		}
@@ -90,7 +81,7 @@ function LoginPage() {
 					</CardContent>
 
 					<CardFooter className="flex-col gap-2">
-						<Button type="submit" className="w-full">
+						<Button type="submit" className="w-full" onClick={handleLogin}>
 							Login
 						</Button>
 						{error && <Badge variant={"destructive"}>{error}</Badge>}
