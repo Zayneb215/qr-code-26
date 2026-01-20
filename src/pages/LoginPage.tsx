@@ -1,4 +1,5 @@
 import { Label } from "@radix-ui/react-label";
+import { useState } from "react";
 import Background from "@/components/Background";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +14,12 @@ import {
 import { Input } from "@/components/ui/input";
 
 function LoginPage() {
+	const [email, setEmail] = useState<string>("");
+	const [password, setPassword] = useState<string>("");
+
+	const login = () => {
+		console.log("Logging in with", { email, password });
+	};
 	return (
 		<Background>
 			<div className="min-h-screen flex justify-center items-center">
@@ -31,19 +38,28 @@ function LoginPage() {
 							<div className="flex flex-col gap-6">
 								<div className="grid gap-2">
 									<Label htmlFor="email">Email</Label>
-									<Input type="email" placeholder="m@example.com" required />
+									<Input
+										type="email"
+										placeholder="m@example.com"
+										required
+										onChange={(event) => setEmail(event.target.value)}
+									/>
 								</div>
 								<div className="grid gap-2">
 									<div className="flex items-center">
 										<Label htmlFor="password">Password</Label>
 									</div>
-									<Input type="password" required />
+									<Input
+										type="password"
+										required
+										onChange={(event) => setPassword(event.target.value)}
+									/>
 								</div>
 							</div>
 						</form>
 					</CardContent>
 					<CardFooter className="flex-col gap-2">
-						<Button type="submit" className="w-full">
+						<Button type="submit" className="w-full" onClick={login}>
 							Login
 						</Button>
 					</CardFooter>
