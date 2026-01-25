@@ -26,9 +26,13 @@ function LoginPage() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (isAuthenticated) {
-			navigate({ to: "/" });
+		async function checkAuth() {
+			const authenticated = await isAuthenticated();
+			if (authenticated) {
+				navigate({ to: "/" });
+			}
 		}
+		checkAuth();
 	}, [isAuthenticated, navigate]);
 
 	async function handleLogin() {

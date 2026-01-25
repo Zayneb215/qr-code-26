@@ -70,7 +70,20 @@ export default function useAuth() {
 		localStorage.removeItem("token");
 	}
 
-	const isAuthenticated = !!localStorage.getItem("token");
+	async function isAuthenticated() {
+		const token = localStorage.getItem("token");
+		if (!token) {
+			return false;
+		}
+
+		const response = await me();
+		if (response.status === 200) {
+			return true;
+		}
+
+		localStorage.removeItem("token");
+		return false;
+	}
 
 	return { login, register, me, logout, isAuthenticated };
 }

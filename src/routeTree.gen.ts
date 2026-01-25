@@ -9,19 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as UsersRouteImport } from './routes/users'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as GenerateRouteImport } from './routes/generate'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as AdduserRouteImport } from './routes/adduser'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProtectedRouteImport } from './routes/_protected'
+import { Route as ProtectedIndexRouteImport } from './routes/_protected/index'
+import { Route as ProtectedUsersRouteImport } from './routes/_protected/users'
+import { Route as ProtectedGenerateRouteImport } from './routes/_protected/generate'
+import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dashboard'
+import { Route as ProtectedAdduserRouteImport } from './routes/_protected/adduser'
 
-const UsersRoute = UsersRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
@@ -32,104 +28,104 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GenerateRoute = GenerateRouteImport.update({
-  id: '/generate',
-  path: '/generate',
+const ProtectedRoute = ProtectedRouteImport.update({
+  id: '/_protected',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdduserRoute = AdduserRouteImport.update({
-  id: '/adduser',
-  path: '/adduser',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IndexRoute = IndexRouteImport.update({
+const ProtectedIndexRoute = ProtectedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => ProtectedRoute,
+} as any)
+const ProtectedUsersRoute = ProtectedUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => ProtectedRoute,
+} as any)
+const ProtectedGenerateRoute = ProtectedGenerateRouteImport.update({
+  id: '/generate',
+  path: '/generate',
+  getParentRoute: () => ProtectedRoute,
+} as any)
+const ProtectedDashboardRoute = ProtectedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => ProtectedRoute,
+} as any)
+const ProtectedAdduserRoute = ProtectedAdduserRouteImport.update({
+  id: '/adduser',
+  path: '/adduser',
+  getParentRoute: () => ProtectedRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/adduser': typeof AdduserRoute
-  '/dashboard': typeof DashboardRoute
-  '/generate': typeof GenerateRoute
+  '/': typeof ProtectedIndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/users': typeof UsersRoute
+  '/adduser': typeof ProtectedAdduserRoute
+  '/dashboard': typeof ProtectedDashboardRoute
+  '/generate': typeof ProtectedGenerateRoute
+  '/users': typeof ProtectedUsersRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/adduser': typeof AdduserRoute
-  '/dashboard': typeof DashboardRoute
-  '/generate': typeof GenerateRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/users': typeof UsersRoute
+  '/adduser': typeof ProtectedAdduserRoute
+  '/dashboard': typeof ProtectedDashboardRoute
+  '/generate': typeof ProtectedGenerateRoute
+  '/users': typeof ProtectedUsersRoute
+  '/': typeof ProtectedIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/adduser': typeof AdduserRoute
-  '/dashboard': typeof DashboardRoute
-  '/generate': typeof GenerateRoute
+  '/_protected': typeof ProtectedRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/users': typeof UsersRoute
+  '/_protected/adduser': typeof ProtectedAdduserRoute
+  '/_protected/dashboard': typeof ProtectedDashboardRoute
+  '/_protected/generate': typeof ProtectedGenerateRoute
+  '/_protected/users': typeof ProtectedUsersRoute
+  '/_protected/': typeof ProtectedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/login'
+    | '/register'
     | '/adduser'
     | '/dashboard'
     | '/generate'
-    | '/login'
-    | '/register'
     | '/users'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
+    | '/login'
+    | '/register'
     | '/adduser'
     | '/dashboard'
     | '/generate'
-    | '/login'
-    | '/register'
     | '/users'
+    | '/'
   id:
     | '__root__'
-    | '/'
-    | '/adduser'
-    | '/dashboard'
-    | '/generate'
+    | '/_protected'
     | '/login'
     | '/register'
-    | '/users'
+    | '/_protected/adduser'
+    | '/_protected/dashboard'
+    | '/_protected/generate'
+    | '/_protected/users'
+    | '/_protected/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AdduserRoute: typeof AdduserRoute
-  DashboardRoute: typeof DashboardRoute
-  GenerateRoute: typeof GenerateRoute
+  ProtectedRoute: typeof ProtectedRouteWithChildren
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
-  UsersRoute: typeof UsersRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/users': {
-      id: '/users'
-      path: '/users'
-      fullPath: '/users'
-      preLoaderRoute: typeof UsersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/register': {
       id: '/register'
       path: '/register'
@@ -144,45 +140,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/generate': {
-      id: '/generate'
-      path: '/generate'
-      fullPath: '/generate'
-      preLoaderRoute: typeof GenerateRouteImport
+    '/_protected': {
+      id: '/_protected'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof ProtectedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/adduser': {
-      id: '/adduser'
-      path: '/adduser'
-      fullPath: '/adduser'
-      preLoaderRoute: typeof AdduserRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
+    '/_protected/': {
+      id: '/_protected/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof ProtectedIndexRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
+    '/_protected/users': {
+      id: '/_protected/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof ProtectedUsersRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
+    '/_protected/generate': {
+      id: '/_protected/generate'
+      path: '/generate'
+      fullPath: '/generate'
+      preLoaderRoute: typeof ProtectedGenerateRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
+    '/_protected/dashboard': {
+      id: '/_protected/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof ProtectedDashboardRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
+    '/_protected/adduser': {
+      id: '/_protected/adduser'
+      path: '/adduser'
+      fullPath: '/adduser'
+      preLoaderRoute: typeof ProtectedAdduserRouteImport
+      parentRoute: typeof ProtectedRoute
     }
   }
 }
 
+interface ProtectedRouteChildren {
+  ProtectedAdduserRoute: typeof ProtectedAdduserRoute
+  ProtectedDashboardRoute: typeof ProtectedDashboardRoute
+  ProtectedGenerateRoute: typeof ProtectedGenerateRoute
+  ProtectedUsersRoute: typeof ProtectedUsersRoute
+  ProtectedIndexRoute: typeof ProtectedIndexRoute
+}
+
+const ProtectedRouteChildren: ProtectedRouteChildren = {
+  ProtectedAdduserRoute: ProtectedAdduserRoute,
+  ProtectedDashboardRoute: ProtectedDashboardRoute,
+  ProtectedGenerateRoute: ProtectedGenerateRoute,
+  ProtectedUsersRoute: ProtectedUsersRoute,
+  ProtectedIndexRoute: ProtectedIndexRoute,
+}
+
+const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
+  ProtectedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AdduserRoute: AdduserRoute,
-  DashboardRoute: DashboardRoute,
-  GenerateRoute: GenerateRoute,
+  ProtectedRoute: ProtectedRouteWithChildren,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
-  UsersRoute: UsersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

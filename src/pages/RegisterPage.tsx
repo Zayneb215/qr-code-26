@@ -1,6 +1,5 @@
 import { Label } from "@radix-ui/react-label";
 import { Link, useNavigate } from "@tanstack/react-router";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import Background from "@/components/Background";
 import { Badge } from "@/components/ui/badge";
@@ -29,9 +28,13 @@ function RegisterPage() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (isAuthenticated) {
-			navigate({ to: "/" });
+		async function checkAuth() {
+			const authenticated = await isAuthenticated();
+			if (authenticated) {
+				navigate({ to: "/" });
+			}
 		}
+		checkAuth();
 	}, [isAuthenticated, navigate]);
 
 	function clearAll() {
