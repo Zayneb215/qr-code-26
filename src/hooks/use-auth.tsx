@@ -4,9 +4,6 @@ import { API_BASE_URL } from "@/constants/api";
 export interface User {
 	id: string;
 	email: string;
-	is_active: boolean;
-	is_superuser: boolean;
-	is_verified: boolean;
 	name: string;
 	last_name: string;
 }
@@ -34,7 +31,7 @@ export default function useAuth() {
 		formData.append("password", data.password);
 
 		const response = await axios.post<LoginResponse>(
-			`${API_BASE_URL}/auth/jwt/login`,
+			`${API_BASE_URL}/auth/login`,
 			formData,
 			{
 				headers: {

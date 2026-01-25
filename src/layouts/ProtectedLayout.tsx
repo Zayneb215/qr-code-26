@@ -20,8 +20,10 @@ function ProtectedLayout() {
 
 	return (
 		<HomePageBg>
-			<NavBar />
-			<Outlet />
+			<div className="container mx-auto flex flex-col gap-5 z-20">
+				<NavBar />
+				<Outlet />
+			</div>
 		</HomePageBg>
 	);
 }

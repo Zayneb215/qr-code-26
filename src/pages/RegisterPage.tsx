@@ -50,6 +50,7 @@ function RegisterPage() {
 			password: password,
 			name: name,
 			last_name: lastName,
+			is_superuser: true,
 		};
 		try {
 			const response = await register(data);

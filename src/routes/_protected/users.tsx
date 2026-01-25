@@ -1,9 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
+import UsersPage from "@/pages/UsersPage";
 
-export const Route = createFileRoute('/_protected/users')({
-  component: RouteComponent,
-})
-
-function RouteComponent() {
-  return <div>Hello "/users"!</div>
-}
+export const Route = createFileRoute("/_protected/users")({
+	component: UsersPage,
+});
