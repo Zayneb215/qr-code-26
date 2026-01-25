@@ -1,5 +1,6 @@
 from typing import Optional
 
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 from passlib.context import CryptContext
@@ -8,6 +9,8 @@ from sqlalchemy.orm import Mapped, Session, mapped_column
 
 from .db import Base, get_db
 from .schemas import RegisterIn, TokenOut, UserCreate, UserInfoOut, UserOut
+
+bearer_scheme = HTTPBearer()
 
 router = APIRouter(tags=["auth"])
 
@@ -48,20 +51,14 @@ def get_user_by_email(db: Session, email: str) -> Optional[User]:
 # -----------------------------
 # NEW: JWT Bearer protection dependency
 # -----------------------------
-def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
-    auth = request.headers.get("Authorization", "")
-    if not auth.startswith("Bearer "):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not authenticated",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+def get_current_user(
+    request: Request,
+    db: Session = Depends(get_db),
+    creds: HTTPAuthorizationCredentials = Depends(bearer_scheme),
+) -> User:
+    token = creds.credentials  # extracted from "Authorization: Bearer <token>"
 
-    token = auth.removeprefix("Bearer ").strip()
-
-    # validates JWT and returns the subject (we stored email in "sub")
     email = request.app.state.decode_token(token)
-
     user = get_user_by_email(db, email)
     if not user:
         raise HTTPException(
