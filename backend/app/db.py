@@ -1,34 +1,27 @@
-from typing import AsyncGenerator
+from sqlalchemy import create_engine
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
-from fastapi import Depends
-from fastapi_users.db import SQLAlchemyBaseUserTableUUID, SQLAlchemyUserDatabase
-from sqlalchemy import String
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
-from sqlalchemy.orm import Mapped, mapped_column, sessionmaker
+DATABASE_URL = "sqlite:///./test.db"
 
-DATABASE_URL = "sqlite+aiosqlite:///./test.db"
-Base: DeclarativeMeta = declarative_base()
+# check_same_thread needed for SQLite + FastAPI
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
 
-class User(SQLAlchemyBaseUserTableUUID, Base):
-    name: Mapped[str] = mapped_column(String(255), nullable=True)
-    last_name: Mapped[str] = mapped_column(String(255), nullable=True)
+class Base(DeclarativeBase):
+    pass
 
 
-engine = create_async_engine(DATABASE_URL)
-async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+def init_db() -> None:
+    # Import models so they are registered with SQLAlchemy metadata
+    from .users import User  # noqa: F401
+
+    Base.metadata.create_all(bind=engine)
 
 
-async def create_db_and_tables():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-
-async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session_maker() as session:
-        yield session
-
-
-async def get_user_db(session: AsyncSession = Depends(get_async_session)):
-    yield SQLAlchemyUserDatabase(session, User)
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
