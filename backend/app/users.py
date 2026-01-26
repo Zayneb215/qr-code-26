@@ -8,7 +8,7 @@ from sqlalchemy import Boolean, Integer, String, select
 from sqlalchemy.orm import Mapped, Session, mapped_column
 
 from .db import Base, get_db
-from .schemas import RegisterIn, TokenOut, UserCreate, UserInfoOut, UserOut
+from .schemas import RegisterIn, TokenOut, UserCreate, UserInfoOut, UserOut, UserUpdate
 
 bearer_scheme = HTTPBearer()
 
@@ -120,7 +120,32 @@ def list_users(
     stmt = select(User).order_by(User.id.asc())
     return db.execute(stmt).scalars().all()
 
-
+@router.put("/users/{user_id}", response_model=UserInfoOut)
+def update_user(
+    user_id: int,
+    data: UserUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),  # protected
+):
+    user = db.query(User).filter(User.id == user_id).first()
+ 
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if data.email:
+        email = data.email.lower()
+        existing = get_user_by_email(db, email)
+        if existing and existing.id != user.id:
+            raise HTTPException(status_code=400, detail="Email already exists")
+        user.email = email
+ 
+    # Update remaining fields if provided
+    for field, value in data.dict(exclude_unset=True).items():
+        if field != "email":
+            setattr(user, field, value)
+ 
+    db.commit()
+    db.refresh(user)
+    return user
 @router.post("/users", response_model=UserInfoOut, status_code=201)
 def create_user(
     data: UserCreate,

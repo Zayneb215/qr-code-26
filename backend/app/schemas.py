@@ -21,6 +21,14 @@ class RegisterIn(BaseModel):
 class TokenOut(BaseModel):
     access_token: str
 
+class UserUpdate(BaseModel):
+    email: Optional[EmailStr] = None
+    name: Optional[str] = None
+    last_name: Optional[str] = None
+    age: Optional[int] = None
+    matriculation_number: Optional[str] = None
+    married: Optional[bool] = None
+    phone_number: Optional[str] = None
 
 # ---- New: generic user create/list schemas (for /users) ----
 class UserCreate(BaseModel):
