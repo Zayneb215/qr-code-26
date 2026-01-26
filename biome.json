@@ -26,7 +26,8 @@
 		"rules": {
 			"recommended": true,
 			"correctness": {
-				"useExhaustiveDependencies": "off"
+				"useExhaustiveDependencies": "off",
+				"useUniqueElementIds": "off"
 			}
 		}
 	},

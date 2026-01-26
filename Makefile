@@ -6,6 +6,6 @@ fastapi:
 	cd backend && uv run python main.py
 
 frontend:
-	@echo "Starting frontend..."
+	@echo "Starting frontend..." 
 	npm i
 	npm run dev
