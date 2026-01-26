@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import UserItem from "@/components/UserItem";
+import UserList from "@/components/UserList";
 import useUsers, { type User } from "../hooks/use-users";
 
 function UsersPage() {
@@ -18,11 +18,8 @@ function UsersPage() {
 
 	return (
 		<div>
-			<div className="flex gap-5">
-				{users.map((user) => (
-					<UserItem user={user} key={user.id} />
-				))}
-			</div>
+			<h1 className="text-5xl font-bold mb-4">Manage Users</h1>
+			<UserList users={users} />
 		</div>
 	);
 }
