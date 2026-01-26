@@ -1,6 +1,5 @@
 import type { User } from "@/hooks/use-users";
 import UserEdit from "./UserEdit";
-import { Button } from "./ui/button";
 
 interface UserItemProps {
 	user: User;
@@ -31,7 +30,7 @@ function UserItem(props: UserItemProps) {
 			<p className="text-muted-foreground">
 				<strong>Phone Number</strong> : {user.phone_number}
 			</p>
-			<UserEdit />
+			<UserEdit user={user} />
 		</div>
 	);
 }

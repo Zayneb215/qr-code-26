@@ -1,6 +1,5 @@
 "use client";
 
-import { Label } from "@radix-ui/react-label";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,37 +11,39 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "./ui/input";
+import type { User } from "@/hooks/use-users";
+import UserForm from "./UserForm";
 
 export const title = "OTP Code";
-
-const UserEdit = () => {
-	const [value, setValue] = useState("");
-
+interface UserEditProps {
+	user: User;
+}
+const UserEdit = (props: UserEditProps) => {
+	const { user } = props;
+	const [dialogOpen, setDialogOpen] = useState(false);
+	function openDialog() {
+		setDialogOpen(true);
+	}
+	function closeDialog() {
+		setDialogOpen(false);
+	}
 	return (
-		<Dialog>
+		<Dialog open={dialogOpen}>
 			<DialogTrigger asChild>
-				<Button>Edit User</Button>
+				<Button className="ml-auto" onClick={openDialog}>
+					Edit User
+				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-md">
 				<DialogHeader>
-					<DialogTitle>Verify your email</DialogTitle>
+					<DialogTitle>Edit User</DialogTitle>
 					<DialogDescription>
-						We've sent a 6-digit code to your email address. Please enter it
-						below.
+						Make changes to user information here. Click save when you're done.
 					</DialogDescription>
 				</DialogHeader>
 				<div className="grid gap-4 py-4">
-					<Label>Name</Label>
-					<Input></Input>
-					<Label>Email</Label>
-					<Input></Input>
+					<UserForm user={user} onSubmit={closeDialog} />
 				</div>
-				<DialogFooter>
-					<Button disabled={value.length !== 6} type="button">
-						Verify
-					</Button>
-				</DialogFooter>
 			</DialogContent>
 		</Dialog>
 	);
